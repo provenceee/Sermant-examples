@@ -1,0 +1,9 @@
+server:
+  port: 8203
+
+spring:
+  application:
+    name: mixed-router-service-d
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181

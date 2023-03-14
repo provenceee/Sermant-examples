@@ -1,0 +1,20 @@
+server:
+  port: 8202
+
+spring:
+  application:
+    name: mixed-router-service-c
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+
+dubbo:
+  application:
+    name: ${spring.application.name}
+  protocol:
+    port: 28202
+    name: dubbo
+  registry:
+    # 模拟存量dubbo应用注册到zookeeper的情况，新开发的应用建议配置为 sc://127.0.0.1:30100
+    address: zookeeper://localhost:2181
+    protocol: zookeeper
