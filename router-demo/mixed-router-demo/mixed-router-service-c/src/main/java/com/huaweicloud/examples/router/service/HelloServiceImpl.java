@@ -19,11 +19,13 @@ package com.huaweicloud.examples.router.service;
 import com.huaweicloud.examples.router.api.HelloService;
 import com.huaweicloud.examples.router.client.ProviderClient;
 
+import org.apache.dubbo.rpc.RpcContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 测试接口
@@ -38,8 +40,11 @@ public class HelloServiceImpl implements HelloService {
     @Autowired
     private ProviderClient providerClient;
 
-    @Value("${downstream.url:http://127.0.0.1:8203/hello}")
-    private String url;
+    @Value("${downstream.ip:http://127.0.0.1:8204}")
+    private String ip;
+
+    @Value("${downstream.path:/mixed-d/hello}")
+    private String path;
 
     @Value("${spring.application.name}")
     private String name;
@@ -50,20 +55,27 @@ public class HelloServiceImpl implements HelloService {
     @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
     private String metadata;
 
-    private String msg;
-
-    @PostConstruct
-    public void init() {
-        msg = name + "[version: " + version + ", metadata: {" + metadata + "}] -> ";
-    }
-
     /**
      * 测试方法
      *
      * @return msg
      */
     @Override
-    public String hello() {
-        return msg + providerClient.hello();
+    public Map<String, Object> hello() {
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("SERVICE_META_PARAMETERS", metadata);
+        meta.put("SERVICE_META_VERSION", version);
+        Map<String, Object> map = new HashMap<>();
+        map.put("attachment", RpcContext.getContext().getObjectAttachments());
+        map.put("meta", meta);
+
+        // use FeignClient
+        Map<String, Object> result = new HashMap<>(providerClient.hello());
+
+        // use RestTemplate
+        //        Map<String, Object> result = new HashMap<>(restTemplate.getForObject(ip + path, Map.class));
+
+        result.put(name, map);
+        return result;
     }
 }

@@ -20,9 +20,12 @@ import com.huaweicloud.examples.router.api.HelloService;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.annotation.PostConstruct;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.annotation.Resource;
 
 /**
@@ -45,20 +48,21 @@ public class Controller {
     @Resource(name = "helloService")
     private HelloService helloService;
 
-    private String msg;
-
-    @PostConstruct
-    public void init() {
-        msg = name + "[version: " + version + ", metadata: {" + metadata + "}] -> ";
-    }
-
     /**
      * 测试方法
      *
      * @return msg
      */
     @GetMapping("hello")
-    public String hello() {
-        return msg + helloService.hello();
+    public Map<String, Object> hello(@RequestHeader Map<String, String> header) {
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("SERVICE_META_PARAMETERS", metadata);
+        meta.put("SERVICE_META_VERSION", version);
+        Map<String, Object> map = new HashMap<>();
+        map.put("header", header);
+        map.put("meta", meta);
+        Map<String, Object> result = new HashMap<>(helloService.hello());
+        result.put(name, map);
+        return result;
     }
 }

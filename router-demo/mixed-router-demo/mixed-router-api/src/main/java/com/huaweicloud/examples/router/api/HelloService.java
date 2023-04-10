@@ -16,6 +16,8 @@
 
 package com.huaweicloud.examples.router.api;
 
+import java.util.Map;
+
 /**
  * 测试接口
  *
@@ -28,5 +30,5 @@ public interface HelloService {
      *
      * @return 测试信息
      */
-    String hello();
+    Map<String, Object> hello();
 }

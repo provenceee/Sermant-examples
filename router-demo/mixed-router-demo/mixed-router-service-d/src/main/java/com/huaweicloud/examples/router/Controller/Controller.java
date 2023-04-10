@@ -23,9 +23,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.HashMap;
 import java.util.Map;
-
-import javax.annotation.PostConstruct;
 
 /**
  * Controller
@@ -46,21 +45,22 @@ public class Controller {
     @Value("${service_meta_parameters:${SERVICE_META_PARAMETERS:${service.meta.parameters:}}}")
     private String metadata;
 
-    private String msg;
-
-    @PostConstruct
-    public void init() {
-        msg = name + "[version: " + version + ", metadata: {" + metadata + "}]";
-    }
-
     /**
      * 测试方法
      *
      * @return msg
      */
     @GetMapping("hello")
-    public String hello(@RequestHeader Map<String, String> map) {
-        LOGGER.info("header is :{}", map);
-        return msg;
+    public Map<String, Object> hello(@RequestHeader Map<String, String> header) {
+        LOGGER.info("header is :{}", header);
+        Map<String, Object> meta = new HashMap<>();
+        meta.put("SERVICE_META_PARAMETERS", metadata);
+        meta.put("SERVICE_META_VERSION", version);
+        Map<String, Object> map = new HashMap<>();
+        map.put("header", header);
+        map.put("meta", meta);
+        Map<String, Object> result = new HashMap<>();
+        result.put(name, map);
+        return result;
     }
 }

@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package com.huaweicloud.examples.router.client;
+package com.huaweicloud.examples.router;
 
-import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-
-import java.util.Map;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 /**
- * feign client
+ * 启动类
  *
  * @author provenceee
  * @since 2022-07-26
  */
-@FeignClient(name = "mixed-router-service-d", url = "${downstream.ip:http://127.0.0.1:8204/}")
-public interface ProviderClient {
+@EnableZuulProxy
+@SpringBootApplication
+public class ZuulApplication {
     /**
-     * 测试接口
+     * 启动方法
      *
-     * @return 测试信息
+     * @param args 参数
      */
-    @GetMapping(value = "${downstream.path:mixed-d/hello}")
-    Map<String, Object> hello();
+    public static void main(String[] args) {
+        SpringApplication.run(ZuulApplication.class);
+    }
 }

@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: mixed-router-zuul
+  cloud:
+    zookeeper:
+      connect-string: localhost:2181
+
+server:
+  port: 8204
+
+feign:
+  hystrix:
+    enabled: true
+
+zuul:
+  routes:
+    mixed-router-service-a: /mixed-a/**
+    mixed-router-service-d: /mixed-d/**
+
+hystrix:
+  command:
+    default:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 50000
+
+ribbon:
+  ConnectTimeout: 10000
+  ReadTimeout: 10000
