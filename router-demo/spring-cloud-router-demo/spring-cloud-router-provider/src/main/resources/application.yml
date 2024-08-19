@@ -4,7 +4,3 @@ spring:
 
 server:
   port: 8162
-
-feign:
-  hystrix:
-    enabled: true
